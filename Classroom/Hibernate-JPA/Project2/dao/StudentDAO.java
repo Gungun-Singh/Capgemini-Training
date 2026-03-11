@@ -1,24 +1,27 @@
-
 package com.capgi.dao;
 
+import com.capgi.entity.Student;
+import java.util.List;
+
 public interface StudentDAO {
-    void save(com.capgi.entity.Student student);
 
-    java.util.List<com.capgi.entity.Student> fetchAll();
+    void save(Student student);
 
-    com.capgi.entity.Student fetchById(int i);
+    List<Student> fetchAll();
 
-    void updateMarks(int i, double v);
+    Student fetchById(int id);
 
-    void delete(int i);
+    void updateMarks(int id, double marks);
 
-    java.util.List<com.capgi.entity.Student> sortByMarks();
+    void delete(int id);
 
-    java.util.List<com.capgi.entity.Student> sortByAgeDesc();
+    List<Student> sortByMarks();
 
-    java.util.List<com.capgi.entity.Student> filterByDept(java.lang.String s);
+    List<Student> sortByAgeDesc();
 
-    java.util.List<com.capgi.entity.Student> nativeFetch();
+    List<Student> filterByDept(String dept);
 
-    void nativeUpdateMarks(int i, double v);
+    List<Student> nativeFetch();
+
+    void nativeUpdateMarks(int id, double marks);
 }
