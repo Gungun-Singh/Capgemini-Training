@@ -252,6 +252,12 @@ select ename from emp where ename like 'A%' or ename like 'J%' or ename like 'S%
 select ename from emp where ename not like '__A%';
 
 
+
+
+
+
+
+
 select length(ename) from emp;
 
 
@@ -266,3 +272,557 @@ select ename from emp where length(ename)=4;
 
 select * from emp where length(ename)>4 and length(ename)<7;
 
+
+
+
+
+
+
+-- --------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+select lower('SMITH');
+select Substr('Qspiders',2,4);
+
+select Substr('Qspiders',5,6);
+-- select Substr('Qspiders',-3);
+
+select Substr(ename,1,1) from emp;
+
+select position('s' in 'Prisha');
+
+select substr('Galgotias uni',position(' ' in 'Galgotias uni')+1);
+
+select substr('rimi@gmail.com', position('@' in 'rimi@gmail.com'));
+
+select substr('rimi@gmail.com',1, position('@' in 'rimi@gmail.com')-1);
+
+select round(45.63);
+select ceil(46.23);
+
+
+select now();
+select current_date;
+select current_timestamp
+
+
+select Extract(year from now());
+
+select Extract(month from now());
+
+select Extract(day from now());
+
+select Extract(hour from now());
+select Extract(minute from now());
+select Extract(second from now());
+
+
+-- retrieve all emp who were hired on friday
+
+-- TO_CHAR()...CONVERT DATE INTO FORMAT MODELS
+
+
+-- day - monday
+-- dy - mon
+-- dd - 16
+-- d - 1
+
+select emp.* , to_char(Hiredate, 'day') as day from emp 
+where to_char(Hiredate,'dy')= 'fri';
+
+-- month - decemnber
+-- mon - dec
+-- mp - 12
+
+-- retrieve dec 
+select emp.* , to_char(Hiredate, 'mon') as mon from emp
+where to_char(Hiredate, 'mon') = 'dec';
+-- or
+-- where hiredate:: text like '____-12-____';
+
+-- yyyy - 2026
+-- yy - 26
+
+-- hired on 1981
+select emp.* , to_char(hiredate, 'yyyy') from emp
+where to_char(hiredate,'yyyy') ='1981';
+
+-- hh12 - 11 hours
+-- hh24 - ...
+-- mi - 39
+-- ss - 39 second
+
+-- hh12-mi--ss  == 11-40-20
+-- hh24-mi-ss ==  
+
+
+-- display the details of emp who hired in the month of march, april, may
+select emp.* , to_char (hiredate,'month') from emp
+where trim(to_char(hiredate,'month')) in ('march', 'april', 'may');
+
+
+
+-- display the details of emp who r hired on 1981 in the month of feb, dec, april on wed and fri
+
+SELECT emp.*,
+       TO_CHAR(hiredate, 'mon'),
+       TO_CHAR(hiredate, 'year'),
+       TO_CHAR(hiredate, 'dy')
+FROM emp
+WHERE TO_CHAR(hiredate, 'mon') IN ('feb','apr','dec')
+  AND (TO_CHAR(hiredate, 'yyyy')) ='1981'
+  AND TO_CHAR(hiredate, 'dy') IN ('wed','fri');
+
+
+
+
+select now() - interval '1 day';
+select now() + interval '1 day';
+select now() - interval '3 month';
+select now() - interval '1 year';
+
+
+-- hired in last 2 years
+select * from emp 
+where hiredate > current_date - interval '2 year';
+
+
+select age(current_date, '2025-01-01');
+
+select extract(year from age(current_date, '2025-01-01')) exper;
+
+-- retrieve emp having 10 yrs of exp
+
+select emp.* , extract(year from age(current_date , hiredate)) exp from emp
+where extract(year from age(current_date , hiredate)) >=10;
+
+
+Select ename, sal, comm, sal + coalesce(comm,0) as total_Sal 
+from emp;
+
+
+-- SELECT ename, MAX(sal) FROM emp;
+
+-- select ename from emp where sal= max(sal);
+
+select count(comm) from emp;
+
+select count(*) from emp;
+
+-- display no. of empl whose name consists of char a
+
+select count(ename) from emp where ename like '%A%';
+
+-- display max salary , min salary and average sal of all emp working in deptno 20
+
+select max(sal) maximum, min(sal) minimum, avg(sal) average from emp where deptno =20;
+
+select * from emp;
+
+-- display number of empl and total salary of all the employees who is earning more than 1700
+
+select count(*) , sum(sal) from emp where sal>1700;
+
+
+
+
+
+
+
+
+
+
+select * from emp;
+
+
+-- can only use deptno col name in select clause
+select deptno, count(*) from emp
+group by (deptno);
+
+-- display no. of employyes in each dept if there sal > 2000
+
+select deptno, count(*) from emp where sal>2000 group by(deptno);
+
+-- display min and max salary given to an employee in each desig
+select min(sal), max(sal),job from emp
+group by(job);
+
+-- display numb of times sal are repeated in empl table
+select count(*),sal from emp
+group by sal;
+
+-- display avg sal to empl in each job
+select job, avg(sal) from emp 
+group by job;
+
+-- display no. of empl earning comm in each dept
+select count(comm),deptno from emp group by deptno;
+
+select count(*),deptno from emp where comm is not null group by deptno;
+
+select count(*) , sal, ename
+from emp
+group by sal,deptno,ename;
+
+
+select count(*), job
+from emp
+group by 2;
+
+
+-- display empl working in dept having
+select count(*) , deptno
+from emp
+group by deptno
+having count(*) >=4;
+
+-- no. of empl in each dept having atleast 2 empl in it and name consist of a or s
+select count(*),deptno
+from emp
+where ename like '%A%' or ename like '%S%'
+group by deptno
+having count(*)>=2;
+
+-- display sal repeated in empl table
+select count(sal), sal from emp
+group by sal
+having count(sal)>1;
+
+
+-- display job and total sal of each job ...if tot sal of each job >7000
+select job, sum(sal) total_salary from emp
+group by job
+having sum(sal)>7000;
+
+-- avg salary of all empl and display it only if avg sal exceeds 55,000.
+select avg(sal) average_sal from emp
+having avg(sal)>55000;
+
+-- numb of empl earning more than 1200 in each job and total sal needed to pay emp of each job must exceed 3800
+select count(*),sum(sal),job from emp
+where sal>1200
+group by job
+having sum(sal)>3800;
+
+-- job and max sal of empl in each job if max exceeds 2600
+select job, max(sal) from emp
+group by job
+having max(sal)>2600;
+
+-- hiredate which are duplicate in empl table
+select hiredate 
+from emp
+group by hiredate
+having count(*)>1;
+
+-- deptno and numb of empl working only if there are 2 empl working in each dept as manager
+select deptno, count(*) from emp
+WHERE job = 'MANAGER'
+group by(deptno)
+having count(*)=2 ;
+
+
+-- arrange name of empl in desc order
+select ename
+from emp
+order by ename desc;
+
+-- display all sal of empl working as manager in asc order
+select sal from emp
+where job ='MANAGER'
+order by sal;
+
+-- display no. of times sal are repeated...in desc order
+select count(*) no_of_times , sal
+from emp
+group by sal
+order by no_of_times desc;
+
+
+-- display details of empl who is earning more than allen
+select * from emp
+where sal>(select sal from emp where ename='ALLEN');
+
+
+
+-- ASSIGNMENTS
+-- 1
+select ename 
+FROM emp 
+WHERE sal>(select sal FROM emp WHERE ename='ADAMS');
+
+-- 2
+select ename,sal FROM emp 
+WHERE sal<(select sal FROM emp WHERE ename='KING');
+
+-- 3
+select ename, deptno 
+FROM emp 
+WHERE deptno=(select deptno FROM emp WHERE ename='JONES');
+
+-- 4
+select ename,job FROM emp 
+WHERE job=(select job FROM emp WHERE ename='JAMES');
+
+-- 5
+select empno, ename,sal*12 AS annual_salary 
+FROM emp 
+WHERE sal*12>(select sal*12 FROM emp WHERE ename='WARD');
+
+-- 6
+select ename, hiredate FROM emp 
+WHERE hiredate<(select hiredate FROM emp WHERE ename='SCOTT');
+
+-- 7
+select ename, hiredate 
+FROM emp 
+WHERE hiredate>(SELECT hiredate FROM emp WHERE job='PRESIDENT');
+
+-- 8
+select ename, sal FROM emp 
+WHERE sal<(select sal FROM emp WHERE empno=7839);
+
+-- 9
+select * from emp 
+where hiredate < (SELECT hiredate FROM emp WHERE ename='MILLER');
+
+-- 10
+SELECT ename, empno 
+FROM emp 
+WHERE sal > (SELECT sal FROM emp WHERE ename = 'ALLEN');
+
+-- 11
+SELECT ename, sal 
+FROM emp 
+WHERE sal > (SELECT sal FROM emp WHERE ename = 'BLAKE');
+
+
+
+
+select * from dept;
+
+select * from emp;
+
+
+-- display dept name of smith
+select d.dname from dept d
+join emp e ON d.deptno=e.deptno
+where e.ename='SMITH';
+
+
+
+select Dname
+from dept
+where deptno in (
+	select deptno from emp
+	where ename in('SMITH' ,'ALLEN')
+);
+
+
+
+select * from dept
+where deptno in (
+	select deptno from emp
+	where job in('DEVELOPER')
+);
+
+-- DETAIL OF empl who is earning min salary
+select * from emp
+where sal in (select min(sal) from emp);
+
+-- display dept details of empl who is earning max salary
+select *
+from dept
+where deptno IN (
+    select deptno
+    from emp
+    where sal in (select max(sal) from emp)
+);
+
+-- display name , sal,job and hiredate of emp working in sales dept and hired before king
+SELECT ename, sal, job, hiredate
+FROM emp
+WHERE deptno = (
+    SELECT deptno 
+    FROM dept 
+    WHERE dname = 'SALES'
+)
+AND hiredate<(
+    SELECT hiredate 
+    FROM emp 
+    WHERE ename = 'KING'
+);
+
+-- display dept name in which there are atleast 4 empl working
+select dname from dept
+where deptno in (select deptno from emp group by deptno having count(*) >3);
+
+-- display the details of emps getting same salary in the same dept
+select * from emp where (deptno,sal) in (
+select deptno, sal from emp
+group by sal, deptno
+HAVING COUNT(*)>1);
+
+
+
+
+
+select * from emp;
+
+select * from emp
+limit 1 offset 2;
+
+
+-- display 5th 6th 7th rec
+select * from emp
+limit 3 offset 4;
+
+-- display last record 
+select * from emp
+order by empno desc
+limit 1
+;
+
+select * from emp 
+limit 1 offset (select count(*)-1
+from emp);
+
+
+-- display 4th max salary
+select distinct sal from emp
+order by sal desc
+limit 1 offset 3;
+
+-- display detail of empl who is earning  3rd and 4th min salary
+select * from emp where sal in (select distinct sal from emp
+order by sal asc
+limit 2 offset 2)
+order by sal asc;
+
+
+
+
+
+
+
+select * from (select * from emp where deptno =20) dummy;
+
+-- display ename, annual_sal of emp whose annual sal is more than 12000
+select ename, sal*12 as annual_sal
+from emp 
+where sal*12>12000;
+-- or
+
+select ename, sal*12 as annual_sal 
+from (select emp.*, sal*12 as annual_sal from emp) t1
+where annual_sal>12000;
+
+
+
+-- -----------------------------------------------------------------------------------------------------------------------------
+AUTHORS	(author_id,author_name,state)
+BOOKS	(book_id, title,author_id,genre_id)
+GENRES	(genre_id,genre_name)
+LOANS	(loan_id,user_id,book_id,borrowed_date,return_date)
+USERS	(user_id,user_name,phnno, email,book_id)
+
+-- display author name who has written book "SQL"
+select author_name
+from authors
+where author_id in (select author_id from books where title='SQL');
+
+-- display no. of books written by each author
+select count(*) from books group by author_id
+
+-- display the user details who has borrowed a book "Atomic habits".
+select * from users where user_id in (select user_id from loans
+	where book_id in ( select book_id from books where title= 'ATOMIC HABITS'));
+
+-- DISPLAY no. of books borrowed by each user??
+select count(user_id), user_id from loans group by user_id;
+
+
+
+
+select * from emp;
+
+select * from dept;
+
+
+-- CARTESIAN / CROSS JOIN
+select * 
+from emp cross join dept;
+
+
+-- display ename,sal and location of all the empl who r working in CHICAGO
+select ename, sal, loc 
+from emp INNER JOIN dept
+on emp.deptno = dept.deptno
+where loc='CHICAGO';
+
+
+-- display name and job whose job and dname starts with 'S'
+select ename, job
+from emp inner join dept
+on emp.deptno = dept.deptno
+where job like 'S%' and dname like 'S%';
+
+-- dname and mgrno fro empl rep to 7839
+ select dname, mgr
+from emp inner join dept
+on emp.deptno = dept.deptno
+where mgr ='7839';
+
+-- dname and hiredate ...hired after 83 into accounting or research dept
+select dname, hiredate
+from emp inner join dept
+on emp.deptno = dept.deptno
+where hiredate >'1983-12-31' and dname in ('ACCOUNTING' , 'RESEARCH'); 
+
+-- DNAME AND ename of empl getting comm in dept 10 or 30
+select dname, ename
+from emp inner join dept
+on emp.deptno = dept.deptno
+where comm is not null and emp.deptno in ('10', '30');
+
+-- dname and empno for all empl whose emp are 7839,7902 and r working in loc newyrk
+select dname, empno 
+from emp inner join dept
+on emp.deptno = dept.deptno
+where empno in ('7839', '7902') and loc ='NEW YORK';
+
+
+-- no of emp working in each dept
+select count(*) , emp.deptno,dname
+from emp inner join dept
+on emp.deptno = dept.deptno
+group by emp.deptno, dname;
+
+-- display emp name and their deptname even though the employee who don't work in any dept 
+select ename, dname
+from emp left join dept
+on emp.deptno = dept.deptno;
+
+-- display ename and dept name even though the dept where no emp r working 
+select ename, dname
+from emp right join dept
+on emp.deptno = dept.deptno;
+
+select ename, dname
+from dept left join emp
+on emp.deptno = dept.deptno;
+
+select ename, dname
+from dept,emp
+on emp.deptno(+)= dept.deptno;
+
+select *
+from dept full join emp
+on emp.deptno = dept.deptno;
